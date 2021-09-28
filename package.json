@@ -1,0 +1,15 @@
+{
+  "name": "listanddownload",
+  "version": "1.0.0",
+  "description": "get data from drive",
+  "main": "index.js",
+  "scripts": {
+    "test": "Test.js"
+  },
+  "author": "rehan fazal",
+  "license": "ISC",
+  "dependencies": {
+    "googleapis": "^39.2.0",
+    "winston": "^3.3.3"
+  }
+}
