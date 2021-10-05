@@ -6,7 +6,7 @@ const fs = require("fs");
 class GoogleDrive {
   successfullFileDownloads = [];
   failedFileDownloads = [];
-
+  
   async googleDriveAuth() {
     try {
       let googleDriveAuthObj = new GoogleDriveAuth();
@@ -316,18 +316,24 @@ class GoogleDrive {
         throw new Error("Filtered files can not be empty");
       }
 
-      for (const file of filteredFiles) {
-        try {
+      for (const file of filteredFiles) 
+      {
+        try
+        {
           await this.downloadGoogleFile(file);
-          this.successfullFileDownloads.push(file.name);
-        } catch (error) {
-          this.failedFileDownloads.push(file.name);
+          this.successfullFileDownloads.push(file);  
+        }
+         catch (error) 
+        {
+          this.failedFileDownloads.push(file); 
           log.error(error.message);
         }
       }
-    } catch (error) {
+    } 
+    catch (error) 
+    {
       let message =
-        "Error found in GoogleDrive.downloadFilesInRange error is " +
+        "Error found in GoogleDrive.downloadFiles error is " +
         error.message;
       log.error(message);
       process.exit();
@@ -337,9 +343,11 @@ class GoogleDrive {
   async downloadGoogleFile({
     name: fileName,
     id: fileId,
+    createdTime : time,
     mimeType: filemimeType,
   }) {
-    try {
+    try 
+    {
       if (typeof fileId == "undefined" || fileId.length == 0) {
         throw new Error("fileId can not be empty");
       }
@@ -352,6 +360,7 @@ class GoogleDrive {
       let downloadFilePath = DOWNLOAD_FOLDER_PATH + "/" + fileName;
 
       console.log("Downloading file ", fileName);
+
       let ref = this;
 
       return new Promise(function (resolve, reject) {
@@ -415,30 +424,46 @@ class GoogleDrive {
     }
   }
 
-  showFileDownloadSummary() {
+  showFileDownloadSummary() 
+  {
     try {
-      if (this.successfullFileDownloads.length > 0) {
-        console.log("---------------------------------------------------");
+      if (this.successfullFileDownloads.length > 0) 
+      {
+        console.log('\n');
         console.log(
-          "Total successfull file downloaded count ",
+         "Total successfull file downloaded count ",
           this.successfullFileDownloads.length
         );
-        let fileNames = this.successfullFileDownloads;
-        fileNames.forEach((fileNames) => {
-          console.log(fileNames);
+        let files = this.successfullFileDownloads;
+        let filesArray = [];
+
+        files.forEach((file) => {
+          filesArray.push({
+            name: file.name,
+            createdTime: file.createdTime
+          })    
         });
+
+        console.table(filesArray);
       }
 
       if (this.failedFileDownloads.length > 0) {
-        console.log("---------------------------------------------------");
+        console.log('\n');
         console.log(
           "Total failed file download count ",
           this.failedFileDownloads.length
         );
-        let fileNames = this.failedFileDownloads;
-        fileNames.forEach((fileNames) => {
-          console.log(fileNames);
+        let files = this.failedFileDownloads;
+        let fileArray = [];
+
+        files.forEach((file) => {
+          fileArray.push({
+            name: file.name,
+            createdTime: file.createdTime
+          })    
         });
+
+        console.table(fileArray);
       }
     } catch (error) {
       let message ="Error found in showFileDownloadSummary message is " + error.message;

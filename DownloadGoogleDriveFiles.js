@@ -20,9 +20,55 @@ class DownloadGoogleDriveFiles
 
         let downloadedFile = await googleDrive.downloadFiles(filteredFiles);
 
-        googleDrive.showFileDownloadSummary();
+        googleDrive.showFileDownloadSummary(downloadedFile);
+
+        this.fileSummaryByMonths(googleDrive.successfullFileDownloads);
+
+
 
         process.exit();
+    }
+
+    fileSummaryByMonths(files)
+    {
+        if (files.length)
+        {
+            let filesByMonth = {};
+
+            files.forEach(file => {
+                let time = file.createdTime;
+                let a = new Date(time);
+                let year = a.getFullYear();
+                let month = a.getMonth();
+                let shortMonth = a.toLocaleString('en-us', { month: 'short' });
+                let ts =  shortMonth + ' ' + year;
+
+                if (!filesByMonth[ts])
+                {
+                    filesByMonth[ts] = [];
+                }
+
+                filesByMonth[ts].push({
+                    name: file.name,
+                    createdTime: file.createdTime
+                });
+            });
+
+            console.log('\n')
+            console.log("File summary by month :-");
+            if (filesByMonth)
+            {
+                for(let i in filesByMonth)
+                {
+                    let filesInMonth = filesByMonth[i];
+                
+                    console.log(i);
+                    console.table(filesInMonth);
+                }
+
+            }
+        }
+
     }
 }
 
